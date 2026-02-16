@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useUserAuth } from '@/lib/userAuthContext';
 import { useUserProtectedRoute } from '@/lib/useUserProtectedRoute';
@@ -289,7 +290,7 @@ export default function UserChatPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        'http://localhost:5000/api/chat/conversations',
+        `${API_BASE_URL}/chat/conversations`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -312,7 +313,7 @@ export default function UserChatPage() {
   const fetchAdminInfo = async (): Promise<ChatAdmin | null> => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/chat/admin',
+        `${API_BASE_URL}/chat/admin`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -330,7 +331,7 @@ export default function UserChatPage() {
   const fetchAllUsers = async (adminParam?: ChatAdmin | null) => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/chat/users',
+        `${API_BASE_URL}/chat/users`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!response.ok) throw new Error('Failed to fetch users');
@@ -356,7 +357,7 @@ export default function UserChatPage() {
   const fetchMessages = async (conversationId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/chat/conversations/${conversationId}`,
+        `${API_BASE_URL}/chat/conversations/${conversationId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (!response.ok) throw new Error('Failed to fetch messages');
@@ -373,7 +374,7 @@ export default function UserChatPage() {
   const markAsRead = async (conversationId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/chat/conversations/${conversationId}/read`,
+        `${API_BASE_URL}/chat/conversations/${conversationId}/read`,
         {
           method: 'PATCH',
           headers: {
@@ -446,7 +447,7 @@ export default function UserChatPage() {
       }
 
       const response = await fetch(
-        'http://localhost:5000/api/chat/send',
+        `${API_BASE_URL}/chat/send`,
         {
           method: 'POST',
           headers: {
@@ -695,7 +696,7 @@ export default function UserChatPage() {
                             {msg.messageType === 'file' && msg.fileUrl ? (
                               <div className="mt-2">
                                 <a
-                                  href={`http://localhost:5000${msg.fileUrl}`}
+                                  href={`${API_BASE_URL.replace(/\/api$/,'')}${msg.fileUrl}`}
                                   download={msg.fileName}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -716,7 +717,7 @@ export default function UserChatPage() {
                                 <audio
                                   controls
                                   className="w-48"
-                                  src={`http://localhost:5000${msg.voiceUrl}`}
+                                  src={`${API_BASE_URL.replace(/\/api$/,'')}${msg.voiceUrl}`}
                                 />
                                 {msg.voiceDuration && (
                                   <p className={`text-xs mt-1 ${msg.senderId === user?.id ? 'text-indigo-100' : 'text-gray-600'}`}>

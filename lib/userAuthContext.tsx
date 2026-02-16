@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { userApi } from './api';
+import { userApi, API_BASE_URL } from './api';
 
 interface User {
   id: string;
@@ -52,7 +52,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/user/login`,
+        `${API_BASE_URL}/user/login`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -82,7 +82,7 @@ export function UserAuthProvider({ children }: { children: ReactNode }) {
     try {
       if (token) {
         await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/user/logout`,
+          `${API_BASE_URL}/user/logout`,
           {
             method: 'POST',
             headers: {

@@ -7,6 +7,7 @@ import { useProtectedRoute } from '@/lib/useProtectedRoute';
 import DashboardLayout from '@/components/DashboardLayout';
 import getSocket from '@/lib/socket';
 import { playNotificationSound, unlockAudio } from '@/lib/notifications';
+import { API_BASE_URL } from '@/lib/api';
 
 interface User {
   _id: string;
@@ -249,7 +250,7 @@ export default function AdminChatPage() {
   const fetchConversations = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/chat/conversations', {
+      const response = await fetch(`${API_BASE_URL}/chat/conversations`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -268,7 +269,7 @@ export default function AdminChatPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/chat/admin/users', {
+      const response = await fetch(`${API_BASE_URL}/chat/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -286,7 +287,7 @@ export default function AdminChatPage() {
   const fetchMessages = async (conversationId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/chat/conversations/${conversationId}`,
+        `${API_BASE_URL}/chat/conversations/${conversationId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -309,7 +310,7 @@ export default function AdminChatPage() {
   const markAsRead = async (conversationId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/chat/conversations/${conversationId}/read`,
+        `${API_BASE_URL}/chat/conversations/${conversationId}/read`,
         {
           method: 'PATCH',
           headers: {
@@ -340,7 +341,7 @@ export default function AdminChatPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/chat/admin/members/${userId1}/${userId2}`,
+        `${API_BASE_URL}/chat/admin/members/${userId1}/${userId2}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -381,7 +382,7 @@ export default function AdminChatPage() {
         formData.append('voiceDuration', recordingTime.toString());
       }
 
-      const response = await fetch('http://localhost:5000/api/chat/send', {
+      const response = await fetch(`${API_BASE_URL}/chat/send`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -699,7 +700,7 @@ export default function AdminChatPage() {
                             {msg.messageType === 'file' && msg.fileUrl ? (
                               <div className="mt-2">
                                 <a
-                                  href={`http://localhost:5000${msg.fileUrl}`}
+                                  href={`${API_BASE_URL.replace(/\/api$/,'')}${msg.fileUrl}`}
                                   download={msg.fileName}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -720,7 +721,7 @@ export default function AdminChatPage() {
                                 <audio
                                   controls
                                   className="w-48"
-                                  src={`http://localhost:5000${msg.voiceUrl}`}
+                                  src={`${API_BASE_URL.replace(/\/api$/,'')}${msg.voiceUrl}`}
                                 />
                                 {msg.voiceDuration && (
                                   <p className={`text-xs mt-1 ${msg.senderId === admin?.id ? 'text-indigo-100' : 'text-gray-600'}`}>

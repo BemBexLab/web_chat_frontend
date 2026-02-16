@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_BASE_URL } from './api';
 
 interface Admin {
   id: string;
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/login`,
+        `${API_BASE_URL}/admin/login`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       if (token) {
         await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/logout`,
+          `${API_BASE_URL}/admin/logout`,
           {
             method: 'POST',
             headers: {

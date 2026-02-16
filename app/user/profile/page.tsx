@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import UserDashboardLayout from '@/components/UserDashboardLayout';
 import { useUserAuth } from '@/lib/userAuthContext';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function UserProfilePage() {
   const { user, token } = useUserAuth();
@@ -27,7 +28,7 @@ export default function UserProfilePage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/user/profile`,
+        `${API_BASE_URL}/user/profile`,
         {
           method: 'PUT',
           headers: {
@@ -72,7 +73,7 @@ export default function UserProfilePage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/user/password`,
+        `${API_BASE_URL}/user/password`,
         {
           method: 'PATCH',
           headers: {
