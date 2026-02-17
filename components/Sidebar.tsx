@@ -11,7 +11,7 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     await logout();
-    // redirect to admin login page (was mistakenly /users/login)
+    // redirect to admin login page (useProtectedRoute will also redirect when token is null)
     router.push('/admin/login');
   };
 

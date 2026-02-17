@@ -10,7 +10,7 @@ export function useProtectedRoute() {
 
   useEffect(() => {
     if (!isLoading && !token) {
-      router.push('/login');
+      router.push('/admin/login');
     }
   }, [token, isLoading, router]);
 

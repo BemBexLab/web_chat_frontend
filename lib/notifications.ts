@@ -18,57 +18,16 @@ const createAudioContext = () => {
 
 export const playNotificationSound = async () => {
   try {
-    const audioContext = getAudioContext();
-    if (!audioContext) {
-      console.warn('Web Audio API not available');
-      // Try HTMLAudio fallback
-      const el = getFallbackAudioElement();
-      try { await el.play(); } catch (_) { /* ignore autoplay errors */ }
-      return;
-    }
-
-    // Try resuming if suspended (may require user gesture)
-    if (audioContext.state === 'suspended') {
-      try {
-        await audioContext.resume();
-      } catch (err) {
-        // resume may fail if no gesture; exit silently
-        console.warn('AudioContext resume failed:', err);
-        return;
-      }
-    }
-
-    // If still not running, try HTMLAudio fallback to avoid start() throwing under autoplay rules
-    if (audioContext.state !== 'running') {
-      const el = getFallbackAudioElement();
-      try { await el.play(); } catch (_) { /* ignore autoplay errors */ }
-      return;
-    }
-
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    // Bell sound parameters
-    const now = audioContext.currentTime;
-    oscillator.frequency.setValueAtTime(800, now);
-    oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.08);
-
-    gainNode.gain.setValueAtTime(0.3, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-    oscillator.type = 'sine';
-    oscillator.start(now);
-    oscillator.stop(now + 0.35);
+    // Use f1_radio.mp3 directly - no fallback to synth tone
+    const audioEl = getFallbackAudioElement();
+    audioEl.currentTime = 0;
+    await audioEl.play();
   } catch (error) {
-    // Avoid spamming console with autoplay errors (they are expected until user gesture)
-    // Log only unexpected errors
+    // Only log if it's an unexpected error, not autoplay restrictions
     if (error && typeof error === 'object' && 'name' in (error as any) && (error as any).name === 'NotAllowedError') {
-      // suppressed autoplay error
-    } else {
-      console.warn('Could not play notification sound:', error);
+      // Autoplay restriction - silently ignore
+    } else if (error instanceof Error) {
+      console.warn('Could not play notification sound:', error.message);
     }
   }
 };

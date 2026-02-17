@@ -79,11 +79,18 @@ export default function UsersPage() {
 
     setActionLoading(true);
     try {
+      // Update user info
       await adminApi.updateUser(token!, editingUser._id, {
         email: formData.email,
         username: formData.username,
         suspended: editingUser.suspended,
       });
+
+      // If password is provided, update it
+      if (formData.password.trim()) {
+        await adminApi.updateUserPassword(token!, editingUser._id, formData.password);
+      }
+
       setMessage('User updated successfully');
       setEditingUser(null);
       setFormData({ email: '', username: '', password: '' });
@@ -279,7 +286,7 @@ export default function UsersPage() {
 
             <form
               onSubmit={editingUser ? handleUpdateUser : handleCreateUser}
-              className="space-y-4"
+              className="space-y-4 text-black"
             >
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -324,6 +331,23 @@ export default function UsersPage() {
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                     required
+                  />
+                </div>
+              )}
+
+              {editingUser && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password (leave empty to keep current)
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                    placeholder="Leave empty to keep current password"
                   />
                 </div>
               )}

@@ -86,6 +86,49 @@ export default function AdminChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Request notification permissions and unlock audio on mount
+  useEffect(() => {
+    const initNotifications = async () => {
+      try {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+          const permission = await Notification.requestPermission();
+          setNotificationsAllowed(permission === 'granted');
+        } else if (typeof Notification !== 'undefined') {
+          setNotificationsAllowed(Notification.permission === 'granted');
+        }
+      } catch (e) {
+        console.error('Failed to request notification permissions', e);
+      }
+
+      // Try to unlock audio context
+      try {
+        const unlocked = await unlockAudio();
+        console.log('Audio context unlocked:', unlocked);
+      } catch (err) {
+        console.error('Failed to unlock audio', err);
+      }
+    };
+
+    initNotifications();
+  }, []);
+
+  // Unlock audio on user interaction (fallback for browsers that require gesture)
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      unlockAudio().catch((err) => console.error('Failed to unlock audio on interaction', err));
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('pointerdown', handleUserInteraction);
+    };
+
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('pointerdown', handleUserInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('pointerdown', handleUserInteraction);
+    };
+  }, []);
+
   // NOTE: playNotificationSound will be invoked only for incoming socket messages
   // (handled in the socket "new_message" handler) so we don't play on local
   // sends or initial fetches.
