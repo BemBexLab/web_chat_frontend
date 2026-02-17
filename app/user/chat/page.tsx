@@ -92,7 +92,7 @@ export default function UserChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Request notification permissions and unlock audio on mount
+  // Request notification permissions on mount (don't unlock audio yet - requires gesture)
   useEffect(() => {
     const initNotifications = async () => {
       try {
@@ -104,14 +104,6 @@ export default function UserChatPage() {
         }
       } catch (e) {
         console.error('Failed to request notification permissions', e);
-      }
-
-      // Try to unlock audio context
-      try {
-        const unlocked = await unlockAudio();
-        console.log('Audio context unlocked:', unlocked);
-      } catch (err) {
-        console.error('Failed to unlock audio', err);
       }
     };
 
